@@ -5,6 +5,7 @@ const postSchema = new Schema(
   {
     name: String,
     description: String,
+    imageUrl: String,
   },
   {
     timestamps: true,

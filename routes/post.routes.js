@@ -2,10 +2,21 @@ const router = require("express").Router();
 const mongoose = require('mongoose');
 const Post = require("../models/Posts.model");
 
+//require cloudinary
+const fileUploader = require("../config/cloudinary.config");
+
+router.post("/upload", fileUploader.single("imageUrl"), (req, res, next) => {
+  if (!req.file) {
+    next(new Error("No file uploaded!"));
+    return;
+  }
+  res.json({ fileUrl: req.file.path });
+});
+
 router.post('/post', (req, res, next) => {
-    const { name, description } = req.body;
+    const { name, description, imageUrl } = req.body;
    
-    Post.create({ name, description })
+    Post.create({ name, description, imageUrl })
       .then(response => res.json(response))
       .catch(err => res.json(err));
   });
@@ -42,9 +53,7 @@ router.put('/post/:postId', (req, res, next) => {
       .catch(error => res.json(error));
   });
    
-   
- 
-  router.delete('/post/:postId', (req, res, next) => {
+router.delete('/post/:postId', (req, res, next) => {
     const { postId } = req.params;
     
     if (!mongoose.Types.ObjectId.isValid(postId)) {
