@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const axios = require("axios"); 
 
 // ℹ️ Handles password encryption
 const bcrypt = require("bcrypt");
@@ -35,7 +36,7 @@ router.get("/session", (req, res) => {
 });
 
 router.post("/signup", isLoggedOut, (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, email } = req.body;
 
   if (!username) {
     return res
@@ -50,7 +51,7 @@ router.post("/signup", isLoggedOut, (req, res) => {
   }
 
   //   ! This use case is using a regular expression to control for special characters and min length
-  /*
+  
   const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
 
   if (!regex.test(password)) {
@@ -59,7 +60,7 @@ router.post("/signup", isLoggedOut, (req, res) => {
         "Password needs to have at least 8 chars and must contain at least one number, one lowercase and one uppercase letter.",
     });
   }
-  */
+  
 
   // Search the database for a user with the username submitted in the form
   User.findOne({ username }).then((found) => {
@@ -77,6 +78,7 @@ router.post("/signup", isLoggedOut, (req, res) => {
         return User.create({
           username,
           password: hashedPassword,
+          email,
         });
       })
       .then((user) => {
@@ -84,7 +86,39 @@ router.post("/signup", isLoggedOut, (req, res) => {
           user: user._id,
           createdAt: Date.now(),
         }).then((session) => {
+          
+          //Send email to welcome!
+          
+          const data = {
+            service_id: "service_h8ax6cp",
+            template_id: "template_ba6otaw",
+            user_id: "lnwtaPmIYfA10wEYt",
+            template_params: {
+              nombre: user.username,
+              correo: user.email,
+              //profilePic: user.profilePic
+            },
+            accessToken: "rcZ5enw51R-V-g4bjsnqC",
+          };
+          const url = "https://api.emailjs.com/api/v1.0/email/send"
+          axios({
+            method: "post",
+            url,
+            headers: {
+              "Content-Type": "application/json",
+            },
+            data: JSON.stringify(data),
+          })
+          .then((result)=>{
+            console.log(result)
+            console.log("correo Enviado")
+          })
+          .catch((err)=>{
+            console.log(err)
+          })
+
           res.status(201).json({ user, accessToken: session._id });
+         
         });
       })
       .catch((error) => {
@@ -100,6 +134,7 @@ router.post("/signup", isLoggedOut, (req, res) => {
         return res.status(500).json({ errorMessage: error.message });
       });
   });
+  
 });
 
 router.post("/login", isLoggedOut, (req, res, next) => {
