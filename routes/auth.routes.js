@@ -16,6 +16,9 @@ const Session = require("../models/Session.model");
 const isLoggedOut = require("../middleware/isLoggedOut");
 const isLoggedIn = require("../middleware/isLoggedIn");
 
+//Require seting cloudinary
+const fileUploader = require("../config/cloudinary.config");
+
 router.get("/session", (req, res) => {
   // we dont want to throw an error, and just maintain the user as null
   if (!req.headers.authorization) {
@@ -86,7 +89,7 @@ router.post("/signup", isLoggedOut, (req, res) => {
           user: user._id,
           createdAt: Date.now(),
         }).then((session) => {
-          
+
           //Send email to welcome!
           
           const data = {
@@ -193,5 +196,22 @@ router.delete("/logout", isLoggedIn, (req, res) => {
       res.status(500).json({ errorMessage: err.message });
     });
 });
+
+// POST "/api/upload" => Route that receives the image, sends it to Cloudinary via the fileUploader and returns the image URL
+router.post("/upload", fileUploader.single("imageUrl"), (req, res, next) => {
+  // console.log("file is: ", req.file)
+ 
+  if (!req.file) {
+    next(new Error("No file uploaded!"));
+    return;
+  }
+  
+  // Get the URL of the uploaded file and send it as a response.
+  // 'fileUrl' can be any name, just make sure you remember to use the same when accessing it on the frontend
+  
+  res.json({ fileUrl: req.file.path });
+});
+
+
 
 module.exports = router;

@@ -9,7 +9,8 @@ const userSchema = new Schema(
     },
    
     password: String,
-    email: {type:String,},
+    email: {type:String,},  
+    imageUrl: String,
   },
   {
     // this second object adds extra properties: `createdAt` and `updatedAt`
