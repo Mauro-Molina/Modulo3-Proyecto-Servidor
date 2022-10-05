@@ -19,6 +19,17 @@ const isLoggedIn = require("../middleware/isLoggedIn");
 //Require seting cloudinary
 const fileUploader = require("../config/cloudinary.config");
 
+// POST "/api/upload" => Route that receives the image, sends it to Cloudinary via the fileUploader and returns the image URL
+router.post("/upload", fileUploader.single("imageUrl"), (req, res, next) => {
+ 
+  if (!req.file) {
+    next(new Error("No file uploaded!"));
+    return;
+  }
+  res.json({ fileUrl: req.file.path });
+});
+
+
 router.get("/session", (req, res) => {
   // we dont want to throw an error, and just maintain the user as null
   if (!req.headers.authorization) {
@@ -39,7 +50,7 @@ router.get("/session", (req, res) => {
 });
 
 router.post("/signup", isLoggedOut, (req, res) => {
-  const { username, password, email } = req.body;
+  const { username, ocupation, password, email, imageUrl } = req.body;
 
   if (!username) {
     return res
@@ -80,8 +91,10 @@ router.post("/signup", isLoggedOut, (req, res) => {
         // Create a user and save it in the database
         return User.create({
           username,
+          ocupation,
           password: hashedPassword,
           email,
+          imageUrl,
         });
       })
       .then((user) => {
@@ -99,7 +112,6 @@ router.post("/signup", isLoggedOut, (req, res) => {
             template_params: {
               nombre: user.username,
               correo: user.email,
-              //profilePic: user.profilePic
             },
             accessToken: "rcZ5enw51R-V-g4bjsnqC",
           };
@@ -197,20 +209,6 @@ router.delete("/logout", isLoggedIn, (req, res) => {
     });
 });
 
-// POST "/api/upload" => Route that receives the image, sends it to Cloudinary via the fileUploader and returns the image URL
-router.post("/upload", fileUploader.single("imageUrl"), (req, res, next) => {
-  // console.log("file is: ", req.file)
- 
-  if (!req.file) {
-    next(new Error("No file uploaded!"));
-    return;
-  }
-  
-  // Get the URL of the uploaded file and send it as a response.
-  // 'fileUrl' can be any name, just make sure you remember to use the same when accessing it on the frontend
-  
-  res.json({ fileUrl: req.file.path });
-});
 
 
 
