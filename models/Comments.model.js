@@ -4,7 +4,9 @@ const { Schema, model } = mongoose;
 const commentsSchema = new Schema({
   name: String,
   comment: String,
-  forom: { type: Schema.Types.ObjectId, ref: 'Forom' }
-});
+},
+ {
+    timestamps: true,
+  });
 
 module.exports = model('Comments', commentsSchema);

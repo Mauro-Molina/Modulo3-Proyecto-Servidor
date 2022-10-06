@@ -4,6 +4,9 @@ const mongoose = require('mongoose');
 const Forom = require('../models/Forom.model');
 const Comments = require('../models/Comments.model');
 
+// Require necessary (isLoggedOut and isLoggedIn) middleware in order to control access to specific routes
+
+
 
 router.post('/forom', (req, res, next) => {
   const { title, description } = req.body;
@@ -30,7 +33,10 @@ router.get('/forom/:foromId', (req, res, next) => {
  
     Forom.findById(foromId)
       .populate('comments')
-      .then(forom => res.status(200).json(forom))
+      .then(forom => {
+        res.status(200).json(forom)
+        })
+     
       .catch(error => res.json(error));
   });
   

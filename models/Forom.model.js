@@ -5,6 +5,8 @@ const foromSchema = new Schema({
   title: String,
   description: String,
   comments: [{ type: Schema.Types.ObjectId, ref: 'Comments' }]
+}, {
+  timestamps: true,
 });
 
 module.exports = model('Forom', foromSchema);

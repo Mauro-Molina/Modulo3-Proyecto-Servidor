@@ -9,7 +9,7 @@ router.post('/comments', (req, res, next) => {
 
   Comments.create({ name, comment, forom: foromId })
     .then(newComments => {
-      return Forom.findByIdAndUpdate(foromId, { $push: { forom: newComments._id } } );
+      return Forom.findByIdAndUpdate(foromId, { $push: { comments: newComments._id } }, {new: true} );
     })
     .then(response => res.json(response))
     .catch(err => res.json(err));
