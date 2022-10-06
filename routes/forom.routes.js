@@ -6,8 +6,6 @@ const Comments = require('../models/Comments.model');
 
 // Require necessary (isLoggedOut and isLoggedIn) middleware in order to control access to specific routes
 
-
-
 router.post('/forom', (req, res, next) => {
   const { title, description } = req.body;
 
