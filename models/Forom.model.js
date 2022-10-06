@@ -4,7 +4,7 @@ const { Schema, model } = mongoose;
 const foromSchema = new Schema({
   title: String,
   description: String,
-  comentario: [{ type: Schema.Types.ObjectId, ref: 'Comentario' }]
+  comments: [{ type: Schema.Types.ObjectId, ref: 'Comments' }]
 });
 
 module.exports = model('Forom', foromSchema);
