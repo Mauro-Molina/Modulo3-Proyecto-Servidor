@@ -3,7 +3,7 @@ const { Schema, model } = mongoose;
 
 const commentsSchema = new Schema({
   name: String,
-  comment: String,
+  comment: {type: String, required: true},
 },
  {
     timestamps: true,
