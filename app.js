@@ -23,6 +23,14 @@ app.use("/api", allRoutes);
 const postRoutes = require("./routes/post.routes");
 app.use("/api", postRoutes);
 
+//Required to routes forom
+const foromRouter = require('./routes/forom.routes');    
+app.use('/api', foromRouter);  
+
+//Required to routes comments
+const commentsRouter = require('./routes/comments.routes');   
+app.use('/api', commentsRouter);  
+
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes
 require("./error-handling")(app);
 
